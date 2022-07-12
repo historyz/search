@@ -39,11 +39,9 @@ func openCensusMiddleware(next http.Handler) http.Handler {
 }
 
 func loggingMiddleware(next http.Handler) http.Handler {
-	return &logging.Handler{
-		Next:        next,
-		Propagation: &stackdriverPropagation.HTTPFormat{},
-		RootLogger:  zlog,
-	}
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		next.ServeHTTP(w, r)
+	})
 }
 
 func trackingMiddleware(next http.Handler) http.Handler {
